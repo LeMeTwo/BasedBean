@@ -8,37 +8,13 @@ import (
 
 type KeyDb struct {
     client *redis.Client
-    ctx context.Context
 }
 
-type DbConfig struct {
-    Addr string
-    Password string
-}
-
-func Connect(cfg DbConfig) *KeyDb {
-    client := redis.NewClient(&redis.Options{
-        Addr: cfg.Addr,
-        Password: cfg.Password,
-        DB: 0,
-        Protocol: 2,
-    })
-
-    ctx := context.Background()
-
-    db := &KeyDb{
-        client: client,
-        ctx: ctx,
-    }
-
-    return db
-}
-
-func (kdb *KeyDb) ScanKeys() (keys []string, err error) {
+func (kdb KeyDb) ScanKeys(ctx context.Context) (keys []string, err error) {
     var cursor uint64
     for {
         var kdbKeys []string
-        kdbKeys, cursor, err = kdb.client.Scan(kdb.ctx, cursor, AVAIL_WILDCARD, 100).Result()
+        kdbKeys, cursor, err = kdb.client.Scan(ctx, cursor, AVAIL_WILDCARD, 100).Result()
         if err != nil {
             panic(err)
         }
@@ -52,9 +28,9 @@ func (kdb *KeyDb) ScanKeys() (keys []string, err error) {
     return keys, nil
 }
 
-func (kdb *KeyDb) ReserveKeys(keys []string) (err error) {
+func (kdb KeyDb) ReserveKeys(ctx context.Context, keys []string) (err error) {
     for _, key := range keys {
-        _, err = kdb.client.Rename(kdb.ctx, key, getKeyUsedName(key)).Result()
+        _, err = kdb.client.Rename(ctx, key, getKeyUsedName(key)).Result()
         if err != nil {
             panic(err)
         }
