@@ -49,3 +49,13 @@ func (kds KeyDbStorage) FetchBatchReservedKeys(ctx context.Context, size int) (k
         return nil, fmt.Errorf("Could not acquire lock: %v", err)
     }
 }
+
+func (kds KeyDbStorage) ExpireKey(ctx context.Context, key string) (err error) {
+    acquired, err := kds.lock.Acquire(ctx)
+    if acquired {
+        defer kds.lock.Release(ctx)
+        return kds.db.ExpireKey(ctx, key)
+    } else {
+        return fmt.Errorf("Could not acquire lock: %v", err)
+    }
+}
