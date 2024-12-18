@@ -2,15 +2,19 @@ package db
 
 import (
     "context"
-    "fmt"
     "github.com/redis/go-redis/v9"
 )
+
+type KeyDatabase interface {
+    ScanKeys(ctx context.Context, size int) (keys []string, err error)
+    ReserveKeys(ctx context.Context, keys []string) (err error)
+}
 
 type KeyDb struct {
     client *redis.Client
 }
 
-func (kdb KeyDb) ScanKeys(ctx context.Context) (keys []string, err error) {
+func (kdb KeyDb) ScanKeys(ctx context.Context, size int) (keys []string, err error) {
     var cursor uint64
     for {
         var kdbKeys []string
@@ -19,12 +23,11 @@ func (kdb KeyDb) ScanKeys(ctx context.Context) (keys []string, err error) {
             panic(err)
         }
         keys = append(keys, kdbKeys[:]...)
-        if cursor == 0 || len(keys) >= 10{
+        if cursor == 0 || len(keys) >= size {
             break
         }
     }
 
-    fmt.Println(keys)
     return keys, nil
 }
 

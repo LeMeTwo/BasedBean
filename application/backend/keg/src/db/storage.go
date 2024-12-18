@@ -12,15 +12,8 @@ type DbConfig struct {
     Password string
 }
 
-type KeyDatabase interface {
-    ScanKeys(ctx context.Context) (keys []string, err error)
-    ReserveKeys(ctx context.Context, keys []string) (err error)
-}
-
-type Lock interface {
-    Acquire(ctx context.Context) (bool, error)
-    Release(ctx context.Context) (bool, error)
-}
+const ACQUIRE_TIMEOUT int = 5
+const LOCK_TIMEOUT int = 5
 
 type KeyDbStorage struct {
     db KeyDatabase
@@ -36,16 +29,16 @@ func NewKeyDbStorage(cfg DbConfig) KeyDbStorage {
     })
     return KeyDbStorage{
         db: KeyDb{client},
-        lock: RedisFairLock{client},
+        lock: NewRedisExpiringLock(client, ACQUIRE_TIMEOUT, LOCK_TIMEOUT),
     }
 }
 
-func (kds KeyDbStorage) FetchBatchReservedKeys(ctx context.Context) (keys []string, err error) {
+func (kds KeyDbStorage) FetchBatchReservedKeys(ctx context.Context, size int) (keys []string, err error) {
     acquired, err := kds.lock.Acquire(ctx)
     if acquired {
         defer kds.lock.Release(ctx)
 
-        keys, err := kds.db.ScanKeys(ctx)
+        keys, err := kds.db.ScanKeys(ctx, size)
         if err != nil {
             return nil, err
         }
