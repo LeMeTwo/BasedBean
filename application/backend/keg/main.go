@@ -4,15 +4,21 @@ import (
 	"keg/src/app"
 	"keg/src/cache"
 	"keg/src/db"
+	"keg/src/env"
 
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
 
+const DB_ADDR string = "DB_ADDR"
+const DB_PW string = "DB_PW"
+
+const APP_ADDR string = "APP_ADDR"
+
 func main() {
     dbCfg := db.DbConfig{
-        Addr: "localhost:6379",
-        Password: "",
+        Addr: env.GetString(DB_ADDR, "localhost:6379"),
+        Password: env.GetString(DB_PW, ""),
     }
     client := redis.NewClient(&redis.Options{
         Addr: dbCfg.Addr,
@@ -29,7 +35,7 @@ func main() {
     defer logger.Sync()
 
     cfg := app.Config{
-        Addr: ":8080",
+        Addr: env.GetString(APP_ADDR, ":8080"),
     };
 
     app := &app.Application{
