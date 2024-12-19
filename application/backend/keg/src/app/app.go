@@ -1,10 +1,12 @@
 package app
 
 import (
-    // "fmt"
     "errors"
     "net/http"
     "time"
+
+    "keg/src/db"
+    "keg/src/cache"
 
     "github.com/go-chi/chi/v5"
     "github.com/go-chi/chi/v5/middleware"
@@ -15,6 +17,8 @@ import (
 type Application struct {
     Config Config
     Logger *zap.SugaredLogger
+    Storage db.KeyStorage
+    Cache cache.KeyCache
 }
 
 type Config struct {

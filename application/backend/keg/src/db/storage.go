@@ -15,18 +15,17 @@ type DbConfig struct {
 const ACQUIRE_TIMEOUT int = 5
 const LOCK_TIMEOUT int = 5
 
+type KeyStorage interface {
+    FetchBatchReservedKeys(ctx context.Context, size int) (keys []string, err error)
+    ExpireKey(ctx context.Context, key string) (err error)
+}
+
 type KeyDbStorage struct {
     db KeyDatabase
     lock Lock
 }
 
-func NewKeyDbStorage(cfg DbConfig) KeyDbStorage {
-    client := redis.NewClient(&redis.Options{
-        Addr: cfg.Addr,
-        Password: cfg.Password,
-        DB: 0,
-        Protocol: 2,
-    })
+func NewKeyDbStorage(client *redis.Client) KeyDbStorage {
     return KeyDbStorage{
         db: KeyDb{client},
         lock: NewRedisExpiringLock(client, ACQUIRE_TIMEOUT, LOCK_TIMEOUT),

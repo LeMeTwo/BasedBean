@@ -1,12 +1,12 @@
 package main
 
 import (
-	// "go.uber.org/zap"
-	// "keg/src/app"
-	// "fmt"
-	"context"
-	"fmt"
+	"keg/src/app"
+	"keg/src/cache"
 	"keg/src/db"
+
+	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -14,22 +14,30 @@ func main() {
         Addr: "localhost:6379",
         Password: "",
     }
-    storage := db.NewKeyDbStorage(dbCfg)
-    ctx := context.Background()
-    _, err := storage.FetchBatchReservedKeys(ctx, 50)
-    if err != nil {
-        fmt.Printf("err: %v\n", err)
+    client := redis.NewClient(&redis.Options{
+        Addr: dbCfg.Addr,
+        Password: dbCfg.Password,
+        DB: 0,
+        Protocol: 2,
+    })
+    defer client.Close()
+    storage := db.NewKeyDbStorage(client)
+
+    cache := cache.LocalKeyCache{}
+
+    logger := zap.Must(zap.NewProduction()).Sugar()
+    defer logger.Sync()
+
+    cfg := app.Config{
+        Addr: ":8080",
+    };
+
+    app := &app.Application{
+        Config: cfg,
+        Logger: logger,
+        Storage: storage,
+        Cache: cache,
     }
-    // cfg := app.Config{
-    //   Addr: ":8080",
-    // };
-    //
-    // logger := zap.Must(zap.NewProduction()).Sugar()
-    // defer logger.Sync()
-    //
-    // app := &app.Application{
-    //   Config: cfg,
-    //   Logger: logger,
-    // }
-    // app.Run(app.Mount())
+
+    logger.Fatal(app.Run(app.Mount()))
 }
