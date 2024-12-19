@@ -14,6 +14,8 @@ import (
     "go.uber.org/zap"
 )
 
+const KEYS_BATCH_SIZE int = 100
+
 type Application struct {
     Config Config
     Logger *zap.SugaredLogger
@@ -44,8 +46,10 @@ func (app *Application) Mount() http.Handler {
     r.Use(middleware.Timeout(60 * time.Second))
 
     r.Route("/v1", func(r chi.Router) {
-        r.Get("/key", app.getKey)
-        r.Delete("/key", app.deleteKey)
+        r.Route("/key", func(r chi.Router) {
+            r.Get("/", app.getKey)
+            r.Delete("/{key}", app.deleteKey)
+        })
     })
 
     return r

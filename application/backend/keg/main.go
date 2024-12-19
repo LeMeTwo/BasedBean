@@ -49,7 +49,7 @@ func main() {
         Config: cfg,
         Logger: logger,
         Storage: storage,
-        Cache: cache,
+        Cache: &cache,
     }
 
     logger.Fatal(app.Run(app.Mount()))
