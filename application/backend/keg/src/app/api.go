@@ -1,6 +1,8 @@
 package app
 
 import (
+	"errors"
+	"keg/src/db"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -41,8 +43,13 @@ func (app *Application) deleteKey(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
 
     if err := app.Storage.ExpireKey(ctx, key); err != nil {
-        // todo
-        app.internalServerError(w, r, err)
+        var keyDoesNotExistErr *db.KeyDoesNotExist
+        switch {
+        case errors.As(err, &keyDoesNotExistErr):
+            app.notFoundResponse(w, r, err)
+        default:
+            app.internalServerError(w, r, err)
+        }
         return
     }
 

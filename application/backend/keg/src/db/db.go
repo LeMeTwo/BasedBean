@@ -1,9 +1,19 @@
 package db
 
 import (
-    "context"
-    "github.com/redis/go-redis/v9"
+	"context"
+	"fmt"
+
+	"github.com/redis/go-redis/v9"
 )
+
+type KeyDoesNotExist struct {
+    key string
+}
+
+func (e *KeyDoesNotExist) Error() string {
+    return fmt.Sprintf("Key '%s' does not exist.", e.key)
+}
 
 type KeyDatabase interface {
     ScanKeys(ctx context.Context, size int) (keys []string, err error)
@@ -44,6 +54,13 @@ func (kdb KeyDb) ReserveKeys(ctx context.Context, keys []string) (err error) {
 }
 
 func (kdb KeyDb) ExpireKey(ctx context.Context, key string) (err error) {
+    exists, err := kdb.client.Exists(ctx, key).Result()
+    if err != nil {
+        return err
+    }
+    if exists == 0 {
+        return &KeyDoesNotExist{key: key}
+    }
     _, err = kdb.client.Rename(ctx, key, getKeyAvailName(key)).Result()
     return
 }
