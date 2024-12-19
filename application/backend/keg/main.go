@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"keg/src/app"
 	"keg/src/cache"
 	"keg/src/db"
@@ -28,6 +30,11 @@ func main() {
     })
     defer client.Close()
     storage := db.NewKeyDbStorage(client)
+    err := storage.Health(context.Background())
+    if err != nil {
+        fmt.Printf("DB health check failed: %v\n", err)
+        return
+    }
 
     cache := cache.LocalKeyCache{}
 

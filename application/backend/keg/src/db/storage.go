@@ -18,6 +18,7 @@ const LOCK_TIMEOUT int = 5
 type KeyStorage interface {
     FetchBatchReservedKeys(ctx context.Context, size int) (keys []string, err error)
     ExpireKey(ctx context.Context, key string) (err error)
+    Health(ctx context.Context) error 
 }
 
 type KeyDbStorage struct {
@@ -58,4 +59,12 @@ func (kds KeyDbStorage) ExpireKey(ctx context.Context, key string) (err error) {
     } else {
         return fmt.Errorf("Could not acquire lock: %v", err)
     }
+}
+
+func (kds KeyDbStorage) Health(ctx context.Context) error {
+    err := kds.db.Ping(ctx)
+    if err != nil {
+        return err
+    }
+    return nil
 }

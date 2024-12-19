@@ -9,6 +9,7 @@ type KeyDatabase interface {
     ScanKeys(ctx context.Context, size int) (keys []string, err error)
     ReserveKeys(ctx context.Context, keys []string) (err error)
     ExpireKey(ctx context.Context, key string) (err error) 
+    Ping(ctx context.Context) error
 }
 
 type KeyDb struct {
@@ -45,4 +46,9 @@ func (kdb KeyDb) ReserveKeys(ctx context.Context, keys []string) (err error) {
 func (kdb KeyDb) ExpireKey(ctx context.Context, key string) (err error) {
     _, err = kdb.client.Rename(ctx, key, getKeyAvailName(key)).Result()
     return
+}
+
+func (kdb KeyDb) Ping(ctx context.Context) error {
+    _, err := kdb.client.Ping(ctx).Result()
+    return err
 }
