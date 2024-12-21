@@ -10,7 +10,7 @@ import (
 )
 
 type Lock interface {
-    Acquire(ctx context.Context) (acquired bool, err error)
+    Acquire(ctx context.Context) (acquired bool, deadline time.Time, err error)
     Release(ctx context.Context) (released bool, err error)
 }
 
@@ -32,8 +32,8 @@ func NewRedisExpiringLock(client *redis.Client, acquire_timeout_s int, lock_time
     }
 }
 
-func (rl RedisExpiringLock) Acquire(ctx context.Context) (acquired bool, err error) {
-    var acquire_lua = redis.NewScript(`
+func (rl RedisExpiringLock) Acquire(ctx context.Context) (acquired bool, deadline time.Time, err error) {
+    acquire_lua := redis.NewScript(`
         local key = KEYS[1]
         local timeout = ARGV[1]
         local identifier = ARGV[2]
@@ -43,6 +43,7 @@ func (rl RedisExpiringLock) Acquire(ctx context.Context) (acquired bool, err err
         end
         return 0
         `)
+    deadline = time.Now().Add(time.Second * time.Duration(rl.lock_timeout))
     acq_timeout := time.Now().Add(time.Second * time.Duration(rl.acquire_timeout))
     for time.Now().Before(acq_timeout) {
         acquired, err = acquire_lua.Run(
@@ -66,7 +67,7 @@ func (rl RedisExpiringLock) lockTimeoutAsString() string {
 }
 
 func (rl RedisExpiringLock) Release(ctx context.Context) (released bool, err error) {
-    var release_lua = redis.NewScript(`
+    release_lua := redis.NewScript(`
         local key = KEYS[1]
         local identifier = ARGV[1]
 

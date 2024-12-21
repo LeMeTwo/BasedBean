@@ -17,7 +17,13 @@ func (app *Application) getKey(w http.ResponseWriter, r *http.Request) {
     if app.Cache.IsEmpty() {
         keys, err := app.Storage.FetchBatchReservedKeys(ctx, KEYS_BATCH_SIZE)
         if err != nil {
-            app.internalServerError(w, r, err)
+            var timeoutExceeded *db.TimeoutExceeded
+            switch {
+            case errors.As(err, &timeoutExceeded):
+                app.timeoutExceededResponse(w, r, err)
+            default:
+                app.internalServerError(w, r, err)
+            }
             return
         }
         app.Cache.PushKeys(keys)
@@ -44,9 +50,12 @@ func (app *Application) deleteKey(w http.ResponseWriter, r *http.Request) {
 
     if err := app.Storage.ExpireKey(ctx, key); err != nil {
         var keyDoesNotExistErr *db.KeyDoesNotExist
+        var timeoutExceeded *db.TimeoutExceeded
         switch {
         case errors.As(err, &keyDoesNotExistErr):
             app.notFoundResponse(w, r, err)
+        case errors.As(err, &timeoutExceeded):
+            app.timeoutExceededResponse(w, r, err)
         default:
             app.internalServerError(w, r, err)
         }
