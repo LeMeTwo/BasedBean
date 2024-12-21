@@ -44,6 +44,26 @@ Key Generator
 
 ## Key Database
 Application uses [KeyDB](https://docs.keydb.dev/) (fork of [Redis](https://redis.io/)) to store prerendered keys. It caches about 100 keys in memory to reduce number of db calls.
+```mermaid
+sequenceDiagram
+    participant cl as Client
+    box rgb(24, 24, 37) KEG
+    participant ka as KegApi
+    participant kc as KegCache
+    end
+    participant kd as KeyDb
+    cl->>ka: GET /v1/key
+    ka->>kc: IsEmpty()
+    kc-->>ka: return empty
+    alt empty
+        ka->>kd: FetchBatchKeys()
+        kd-->>ka: return keys
+        ka->>kc: PushKeys(keys)
+    end
+    ka->>kc: GetKey()
+    kc-->>ka: return key
+    ka-->>cl: return key
+```
 ### Keys
 Keys are prerendered and stored in database with ".avail" suffix. After batch of keys are fetched from database they are renamed to have ".used" suffix.
 Once key is expired / deleted it is once again renamed to have avail suffix.
