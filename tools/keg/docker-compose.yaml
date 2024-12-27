@@ -1,0 +1,7 @@
+services:
+  keydb:
+    image: eqalpha/keydb:alpine_x86_64_v6.3.4
+    container_name: keg-keydb
+    ports:
+      - 6379:6379
+    restart: unless-stopped
