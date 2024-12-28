@@ -12,10 +12,17 @@ pub struct UserData {
 pub struct PasteData {
     pub key: String,
     pub content: String,
+    pub title: String,
+    pub timestamp: i64,
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct KeyData {
+    pub id: String,
+    pub keys: Vec<String>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ResponseInfo {
     pub info: String,
 }
-

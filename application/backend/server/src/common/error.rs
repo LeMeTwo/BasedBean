@@ -13,7 +13,8 @@ pub enum InternalServerError {
     KegInvalidData(String),
     InvalidUsername(String),
     InvalidPassword(String, String),
-    UnauthorizedSession(String),
+    InvalidHeaderData(String),
+    InactiveSession,
     ServerComponentError(String),
     InvalidUrl(String),
 }
@@ -23,6 +24,12 @@ impl Display for InternalServerError {
         match self {
             InternalServerError::MongoDbError(msg) => {
                 write!(f, "InternalServerError::MongoDbError: {}", msg)
+            }
+            InternalServerError::InactiveSession => {
+                write!(
+                    f,
+                    "InternalServerError::InactiveSession: Operation require active session."
+                )
             }
             InternalServerError::InvalidDbData(msg) => {
                 write!(f, "InternalServerError::InvalidDbData: {}", msg)
@@ -58,8 +65,8 @@ impl Display for InternalServerError {
                     password, expected_password
                 )
             }
-            InternalServerError::UnauthorizedSession(msg) => {
-                write!(f, "InternalServerError::UnauthorizedSession: {}", msg)
+            InternalServerError::InvalidHeaderData(msg) => {
+                write!(f, "InternalServerError::InvalidHeaderData: {}", msg)
             }
             InternalServerError::ServerComponentError(msg) => {
                 write!(f, "InternalServerError::ServerComponentError: {}", msg)
@@ -81,10 +88,8 @@ impl InternalServerError {
         }
 
         match self {
-            InternalServerError::InvalidDbData(_) => {
-                HttpResponse::BadRequest().json(ResponseInfo {
-                    info: "User already exist.".to_string(),
-                })
+            InternalServerError::InvalidDbData(msg) => {
+                HttpResponse::BadRequest().json(ResponseInfo { info: msg.clone() })
             }
             InternalServerError::MongoDbError(_) => HttpResponse::BadGateway().json(ResponseInfo {
                 info: "Cannot connect to database.".to_string(),
@@ -95,9 +100,14 @@ impl InternalServerError {
                     info: "Invalid login or password.".to_string(),
                 })
             }
-            InternalServerError::UnauthorizedSession(_) => {
+            InternalServerError::InactiveSession => {
                 HttpResponse::Unauthorized().json(ResponseInfo {
-                    info: "User not logged in.".to_string(),
+                    info: "Unactive session.".to_string(),
+                })
+            }
+            InternalServerError::InvalidHeaderData(_) => {
+                HttpResponse::BadRequest().json(ResponseInfo {
+                    info: "Invalid header data".to_string(),
                 })
             }
             InternalServerError::InvalidUrl(_) => HttpResponse::NotFound().json(ResponseInfo {

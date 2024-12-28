@@ -1,19 +1,21 @@
 use crate::app::state::AppState;
 use crate::common::ResponseInfo;
-use crate::common::{session::validate_token, InternalServerError, PasteData};
-use actix_web::http::header;
+use crate::common::{session::check_session, InternalServerError, PasteData};
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse, Responder};
+use chrono;
 use log::info;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 struct AddPasteReq {
     text: String,
+    title: String,
 }
 
 #[derive(Serialize)]
 struct GetPasteResp {
     text: String,
+    title: String,
 }
 
 #[post("/paste")]
@@ -43,30 +45,22 @@ async fn save_paste(
     add_paste_req: &web::Json<AddPasteReq>,
     req: &HttpRequest,
 ) -> Result<(), InternalServerError> {
-    check_session(&req)?;
+    const GUEST_ID: &str = "guest";
 
-    let client_resp = state.get_key_client().get_key().await?;
+    let key = state.get_key_client().get_key().await?;
     let paste_data = PasteData {
-        key: client_resp,
+        key: key.clone(),
         content: add_paste_req.text.clone(),
+        title: add_paste_req.title.clone(),
+        timestamp: chrono::Utc::now().timestamp(),
     };
 
-    state.get_db().add_paste(&paste_data).await
-}
+    state.get_db().add_paste(&paste_data).await?;
 
-fn check_session(req: &HttpRequest) -> Result<(), InternalServerError> {
-    let header_data = match req.headers().get(header::AUTHORIZATION) {
-        Some(header) => header
-            .to_str()
-            .map_err(|e| InternalServerError::ServerComponentError(e.to_string()))?,
-        None => {
-            return Err(InternalServerError::UnauthorizedSession(
-                "Invalid header.".to_string(),
-            ));
-        }
-    };
-
-    validate_token(&header_data.to_string())
+    match check_session(&req)? {
+        Some(id) => state.get_db().add_key(&id.to_string(), &key).await,
+        None => state.get_db().add_key(&GUEST_ID.to_string(), &key).await,
+    }
 }
 
 #[get("/paste/{key}")]
@@ -80,6 +74,7 @@ pub async fn get_paste(state: web::Data<AppState>, path: web::Path<String>) -> i
             info!("Paste received successfully.");
             HttpResponse::Ok().json(GetPasteResp {
                 text: paste_data.content,
+                title: paste_data.title,
             })
         }
         Err(e) => e.handle_error_for_http_resp(),
@@ -126,8 +121,27 @@ async fn remove_paste(
     key: &String,
     req: &HttpRequest,
 ) -> Result<(), InternalServerError> {
-    check_session(&req)?;
+    match check_session(&req)? {
+        Some(id) => remove_user_paste(&state, &key, &id.to_string()).await,
+        None => Err(InternalServerError::InactiveSession),
+    }
+}
 
-    state.get_key_client().delete_key(&key).await?;
-    state.get_db().delete_paste(&key).await
+async fn remove_user_paste(
+    state: &web::Data<AppState>,
+    key: &String,
+    id: &String,
+) -> Result<(), InternalServerError> {
+    match state.get_db().get_keys(&id).await? {
+        Some(user_keys) => {
+            if !user_keys.keys.iter().any(|k| k == key) {
+                return Err(InternalServerError::InvalidUrl(key.clone()));
+            }
+
+            state.get_key_client().delete_key(&key).await?;
+            state.get_db().delete_paste(&key).await?;
+            state.get_db().dekete_key(&id, &key).await
+        }
+        None => Err(InternalServerError::InvalidUrl(key.clone())),
+    }
 }

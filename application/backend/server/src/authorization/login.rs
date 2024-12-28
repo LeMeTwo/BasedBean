@@ -55,7 +55,7 @@ fn is_password_valid(
     match Argon2::default().verify_password(password.as_bytes(), &password_hash) {
         Ok(_) => Ok(user_data.clone()),
         Err(_) => Err(InternalServerError::InvalidPassword(
-            password_hash.params.to_string(),
+            password_hash.to_string(),
             password.clone(),
         )),
     }

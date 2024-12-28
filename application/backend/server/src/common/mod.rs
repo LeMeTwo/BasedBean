@@ -1,8 +1,9 @@
+mod error;
 mod models;
 pub mod session;
-mod error;
 
-pub use models::PasteData as PasteData;
-pub use models::UserData as UserData;
-pub use models::ResponseInfo as ResponseInfo;
-pub use error::InternalServerError as InternalServerError;
+pub use error::InternalServerError;
+pub use models::KeyData;
+pub use models::PasteData;
+pub use models::ResponseInfo;
+pub use models::UserData;

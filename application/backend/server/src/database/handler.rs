@@ -1,21 +1,23 @@
 use crate::common::InternalServerError;
-use crate::common::{PasteData, UserData};
+use crate::common::{KeyData, PasteData, UserData};
 use actix_web::http::uri;
-use log::{info, debug};
+use log::{debug, info};
 use mongodb::{bson::doc, options::ClientOptions, Client, Collection, Database};
-use std::env;
 use std::error::Error;
+use std::env;
 
 #[derive(Clone, Debug)]
 pub struct DatabaseHandler {
     user_data_collection: Collection<UserData>,
     paste_data_collection: Collection<PasteData>,
+    keys_data_collection: Collection<KeyData>,
 }
 
 impl DatabaseHandler {
     const DATABASE_NAME: &str = "db";
     const USERS_COLLECTION: &str = "users";
     const PASTES_COLLECTION: &str = "pastes";
+    const KEYS_COLLECTION: &str = "keys";
 
     pub async fn new() -> Result<Self, InternalServerError> {
         info!("Init DatabaseHandler.");
@@ -25,10 +27,12 @@ impl DatabaseHandler {
             .map_err(|e| InternalServerError::MongoDbError(e.to_string()))?;
         let user_data_collection: Collection<UserData> = db.collection(Self::USERS_COLLECTION);
         let paste_data_collection: Collection<PasteData> = db.collection(Self::PASTES_COLLECTION);
-        
+        let keys_data_collection: Collection<KeyData> = db.collection(Self::KEYS_COLLECTION);
+
         Ok(Self {
             user_data_collection: user_data_collection.clone(),
             paste_data_collection: paste_data_collection.clone(),
+            keys_data_collection: keys_data_collection.clone(),
         })
     }
 
@@ -121,10 +125,72 @@ impl DatabaseHandler {
 
     pub async fn delete_paste(&self, key: &String) -> Result<(), InternalServerError> {
         info!("Delete paste with key {}.", key);
-        
+
         match self
             .paste_data_collection
             .delete_one(doc! {"key": key})
+            .await
+        {
+            Ok(_) => Ok(()),
+            Err(e) => Err(InternalServerError::MongoDbError(e.to_string())),
+        }
+    }
+
+    pub async fn add_key(&self, id: &String, key: &String) -> Result<(), InternalServerError> {
+        info!("Add key {} for user {}.", &key, &id);
+
+        match self.get_keys(&id).await? {
+            Some(_) => self.update_keys_for_user(&id, &key).await,
+            None => self.create_keys_for_user(&id, &key).await,
+        }
+    }
+
+    pub async fn update_keys_for_user(
+        &self,
+        id: &String,
+        key: &String,
+    ) -> Result<(), InternalServerError> {
+        match self
+            .keys_data_collection
+            .update_one(doc! {"id": id}, doc! {"$push": {"keys": key}})
+            .await
+        {
+            Ok(_) => Ok(()),
+            Err(e) => Err(InternalServerError::MongoDbError(e.to_string())),
+        }
+    }
+
+    pub async fn create_keys_for_user(
+        &self,
+        id: &String,
+        key: &String,
+    ) -> Result<(), InternalServerError> {
+        let key_data = KeyData {
+            id: id.clone(),
+            keys: vec![key.clone()],
+        };
+
+        match self.keys_data_collection.insert_one(key_data).await {
+            Ok(_) => Ok(()),
+            Err(e) => Err(InternalServerError::MongoDbError(e.to_string())),
+        }
+    }
+
+    pub async fn get_keys(&self, id: &String) -> Result<Option<KeyData>, InternalServerError> {
+        info!("Get paste for user {}.", &id);
+
+        match self.keys_data_collection.find_one(doc! {"id": id}).await {
+            Ok(key_data) => Ok(key_data),
+            Err(e) => Err(InternalServerError::MongoDbError(e.to_string())),
+        }
+    }
+
+    pub async fn dekete_key(&self, id: &String, key: &String) -> Result<(), InternalServerError> {
+        info!("Delete key {} for user {}.", &key, &id);
+
+        match self
+            .keys_data_collection
+            .update_one(doc! {"id": id}, doc! {"$pull": {"keys": key}})
             .await
         {
             Ok(_) => Ok(()),
