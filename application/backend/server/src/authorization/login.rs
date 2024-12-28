@@ -1,6 +1,7 @@
 use crate::app::state::AppState;
 use crate::common::{session::generate_token, InternalServerError, UserData};
 use actix_web::{post, web, HttpResponse, Responder};
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use log::{debug, info};
 use serde::{Deserialize, Serialize};
 
@@ -50,10 +51,11 @@ fn is_password_valid(
     user_data: &UserData,
     password: &String,
 ) -> Result<UserData, InternalServerError> {
-    match user_data.password == *password {
-        true => Ok(user_data.clone()),
-        false => Err(InternalServerError::InvalidPassword(
-            user_data.password.clone(),
+    let password_hash = PasswordHash::new(&user_data.password).unwrap();
+    match Argon2::default().verify_password(password.as_bytes(), &password_hash) {
+        Ok(_) => Ok(user_data.clone()),
+        Err(_) => Err(InternalServerError::InvalidPassword(
+            password_hash.params.to_string(),
             password.clone(),
         )),
     }
@@ -65,10 +67,8 @@ fn handle_valid_user(user_data: &UserData) -> HttpResponse {
     match generate_token(&user_data.id) {
         Ok(token) => {
             info!("User logged in successfully.");
-            HttpResponse::Ok().json(LoginResp {
-                token: token,
-            })
+            HttpResponse::Ok().json(LoginResp { token: token })
         }
-        Err(e) => e.handle_error_for_http_resp()
+        Err(e) => e.handle_error_for_http_resp(),
     }
 }

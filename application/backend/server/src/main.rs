@@ -7,11 +7,11 @@ mod paste;
 use actix_web::{web, App, HttpServer};
 use app::state::AppState;
 use authorization::{log_user, register_user};
-use paste::{add_paste, delete_paste, get_paste};
 use dotenv::dotenv;
-use std::env;
 use env_logger;
 use log::info;
+use paste::{add_paste, delete_paste, get_paste};
+use std::env;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
