@@ -20,10 +20,7 @@ pub async fn register_user(
     state: web::Data<AppState>,
     register_req: web::Json<RegisterReq>,
 ) -> impl Responder {
-    info!(
-        "Reqister user: {}, password {}",
-        &register_req.user, &register_req.password
-    );
+    info!("Reqister user: {}.", &register_req.user);
 
     let user_data = UserData {
         id: Uuid::new_v4(),

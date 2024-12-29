@@ -21,10 +21,7 @@ pub async fn log_user(
     state: web::Data<AppState>,
     login_req: web::Json<LoginReq>,
 ) -> impl Responder {
-    info!(
-        "Log user: {}, password {}",
-        &login_req.user, &login_req.password
-    );
+    info!("Log user: {}.", &login_req.user);
 
     let result = is_user_valid(&state, &login_req).await;
 
