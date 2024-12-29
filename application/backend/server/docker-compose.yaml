@@ -1,0 +1,7 @@
+services:
+  server:
+    build: .
+    container_name: server
+    network_mode: "host" 
+    ports:
+      - '8090:8090'
