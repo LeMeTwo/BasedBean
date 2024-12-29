@@ -31,10 +31,8 @@ pub async fn add_paste(
     match result {
         Ok(_) => {
             info!("Paste added successfully.");
-            HttpResponse::Created().json({
-                ResponseInfo {
-                    info: "Paste added successfully.".to_string(),
-                }
+            HttpResponse::Created().json(ResponseInfo {
+                info: "Paste added successfully.".to_string(),
             })
         }
         Err(e) => e.handle_error_for_http_resp(),
@@ -105,10 +103,8 @@ pub async fn delete_paste(
     match result {
         Ok(_) => {
             info!("Paste deleted successfully.");
-            HttpResponse::Ok().json({
-                ResponseInfo {
-                    info: "Paste deleted successfully.".to_string(),
-                }
+            HttpResponse::Ok().json(ResponseInfo {
+                info: "Paste deleted successfully.".to_string(),
             })
         }
         Err(e) => e.handle_error_for_http_resp(),

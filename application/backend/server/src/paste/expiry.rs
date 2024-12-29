@@ -12,10 +12,8 @@ pub async fn check_expiry(state: web::Data<AppState>) -> impl Responder {
     match result {
         Ok(_) => {
             info!("Expiry checked successfully.");
-            HttpResponse::Ok().json({
-                ResponseInfo {
-                    info: "Expiry checked successfully.".to_string(),
-                }
+            HttpResponse::Ok().json(ResponseInfo {
+                info: "Expiry checked successfully.".to_string(),
             })
         }
         Err(e) => e.handle_error_for_http_resp(),
