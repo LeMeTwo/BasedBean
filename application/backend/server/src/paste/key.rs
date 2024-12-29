@@ -6,8 +6,13 @@ use serde::Deserialize;
 use std::env;
 
 #[derive(Deserialize)]
-struct KegKeyResp {
+struct KegKeyRespData {
     key: String,
+}
+
+#[derive(Deserialize)]
+struct KegKeyResp {
+    data: KegKeyRespData,
 }
 
 #[derive(Clone)]
@@ -41,8 +46,8 @@ impl KeyClient {
 
         match resp.json::<KegKeyResp>().await {
             Ok(keg_data) => {
-                info!("Generated key {}.", keg_data.key);
-                Ok(keg_data.key)
+                info!("Generated key {}.", keg_data.data.key);
+                Ok(keg_data.data.key)
             }
             Err(e) => Err(InternalServerError::KegInvalidData(e.to_string())),
         }
