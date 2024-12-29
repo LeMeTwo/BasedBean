@@ -32,7 +32,7 @@ BasedBean Server
 
 > | http code     | content-type                      | response                                                            |
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
-> | `201`         | `application/json`                | {"info": "User added successfully"}                                 |
+> | `201`         | `application/json`                | {"info":"User added successfully"}                                  |
 > | `400`         | `application/json`                | {"info":"User already exist."}                                      |
 
 </details>
@@ -46,18 +46,19 @@ BasedBean Server
 > |-----------------------------------|---------------------------------------------------------------------|
 > | `authorization`                   | "Bearer {token}"                                                    |
 
+If authorization header is not provided paste will be created as guest and removed after 7 days.
+
 ##### Request data
 
 > | content-type                      | data                                                                |
 > |-----------------------------------|---------------------------------------------------------------------|
-> | `application/json`                | {"text":"paste_content"}                                            |
+> | `application/json`                | {"text":"paste content, "title":"paste title"}                      |
 
 ##### Responses
 
 > | http code     | content-type                      | response                                                            |
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
 > | `201`         | `application/json`                | {"info": "Paste added successfully."}                               |
-> | `401`         | `application/json`                | {"info": "User not logged in."}                                     |
 
 </details>
 
@@ -74,9 +75,8 @@ BasedBean Server
 
 > | http code     | content-type                      | response                                                            |
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
-> | `200`         | `application/json`                | {"text": "paste content"}                               |
-
-</details>
+> | `200`         | `application/json`                | {"text": "paste content", "title":"paste title"}                    |
+> | `400`         | `application/json`                | {"info": "Invalid key."}                                            |
 
 </details>
 
@@ -100,11 +100,43 @@ BasedBean Server
 > | http code     | content-type                      | response                                                            |
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
 > | `200`         | `application/json`                | {"info": "Paste deleted successfully."}                             |
-> | `401`         | `application/json`                | {"info": "User not logged in."}                                     |
+> | `400`         | `application/json`                | {"info": "Invalid key."}                                            |
+> | `401`         | `application/json`                | {"info": "Inactive session."}                                       |
 
 </details>
 
-Paste is saved with key generated from Keg (Key Generator) microservice. The operation is analogous for key removal.
+<details>
+ <summary><code>GET</code> <code><b>/user/pastes</b></code> <code>(get list of pastes created by user)</code></summary>
+
+##### Request header data
+
+> | header name                       | data                                                                |
+> |-----------------------------------|---------------------------------------------------------------------|
+> | `authorization`                   | "Bearer {token}"                                                    |
+
+##### Responses
+
+> | http code     | content-type                      | response                                                                                |
+> |---------------|-----------------------------------|-----------------------------------------------------------------------------------------|
+> | `200`         | `application/json`                | {"pastes": [{"key":"1", "title":"first paste"}, {"key":"2", "title":"second paste"}]}   |
+> | `401`         | `application/json`                | {"info": "Inactive session."}                                                           |
+
+</details>
+
+<details>
+ <summary><code>DELETE</code> <code><b>/expiry</b></code> <code>(delete all outdated guest pastes)</code></summary>
+
+##### Responses
+
+> | http code     | content-type                      | response                                               |
+> |---------------|-----------------------------------|--------------------------------------------------------|
+> | `200`         | `application/json`                | {"info":"Expiry run successfully."}                    |
+
+</details>
+
+## Architecture
+
+Server is connected to database and Keg (Key Generator) microservice. Below flow chart shows interworking between components in example of paste addition. The operation is analogous for key removal.
 
 ```mermaid
 sequenceDiagram

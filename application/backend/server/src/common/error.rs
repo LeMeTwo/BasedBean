@@ -111,7 +111,7 @@ impl InternalServerError {
                 })
             }
             InternalServerError::InvalidUrl(_) => HttpResponse::NotFound().json(ResponseInfo {
-                info: "Invalid URL.".to_string(),
+                info: "Invalid key.".to_string(),
             }),
             _ => HttpResponse::InternalServerError().finish(),
         }
