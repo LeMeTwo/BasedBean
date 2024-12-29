@@ -10,7 +10,7 @@ use authorization::{log_user, register_user};
 use dotenv::dotenv;
 use env_logger;
 use log::info;
-use paste::{add_paste, delete_paste, get_paste};
+use paste::{add_paste, delete_paste, get_paste, check_expiry};
 use std::env;
 
 #[actix_web::main]
@@ -34,6 +34,7 @@ async fn main() -> std::io::Result<()> {
             .service(add_paste)
             .service(delete_paste)
             .service(get_paste)
+            .service(check_expiry)
     })
     .bind((ip, port.parse().unwrap()))?
     .run()

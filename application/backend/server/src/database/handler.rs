@@ -3,8 +3,8 @@ use crate::common::{KeyData, PasteData, UserData};
 use actix_web::http::uri;
 use log::{debug, info};
 use mongodb::{bson::doc, options::ClientOptions, Client, Collection, Database};
-use std::error::Error;
 use std::env;
+use std::error::Error;
 
 #[derive(Clone, Debug)]
 pub struct DatabaseHandler {
@@ -185,7 +185,7 @@ impl DatabaseHandler {
         }
     }
 
-    pub async fn dekete_key(&self, id: &String, key: &String) -> Result<(), InternalServerError> {
+    pub async fn delete_key(&self, id: &String, key: &String) -> Result<(), InternalServerError> {
         info!("Delete key {} for user {}.", &key, &id);
 
         match self

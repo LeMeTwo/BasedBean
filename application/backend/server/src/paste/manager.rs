@@ -1,6 +1,7 @@
 use crate::app::state::AppState;
-use crate::common::ResponseInfo;
-use crate::common::{session::check_session, InternalServerError, PasteData};
+use crate::common::{
+    session::check_session, InternalServerError, PasteData, ResponseInfo, GUEST_ID,
+};
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse, Responder};
 use chrono;
 use log::info;
@@ -45,8 +46,6 @@ async fn save_paste(
     add_paste_req: &web::Json<AddPasteReq>,
     req: &HttpRequest,
 ) -> Result<(), InternalServerError> {
-    const GUEST_ID: &str = "guest";
-
     let key = state.get_key_client().get_key().await?;
     let paste_data = PasteData {
         key: key.clone(),
@@ -66,7 +65,7 @@ async fn save_paste(
 #[get("/paste/{key}")]
 pub async fn get_paste(state: web::Data<AppState>, path: web::Path<String>) -> impl Responder {
     let key = path.into_inner();
-    info!("Paste requested for paste: {}.", key);
+    info!("Requested paste: {}.", key);
 
     let result = get_paste_from_db(&state, &key).await;
     match result {
@@ -140,7 +139,7 @@ async fn remove_user_paste(
 
             state.get_key_client().delete_key(&key).await?;
             state.get_db().delete_paste(&key).await?;
-            state.get_db().dekete_key(&id, &key).await
+            state.get_db().delete_key(&id, &key).await
         }
         None => Err(InternalServerError::InvalidUrl(key.clone())),
     }
