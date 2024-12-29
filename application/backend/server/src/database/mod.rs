@@ -1,3 +1,3 @@
 mod handler;
 
-pub use handler::DatabaseHandler as DatabaseHandler;
+pub use handler::DatabaseHandler;

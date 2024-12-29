@@ -2,7 +2,6 @@ use crate::database::DatabaseHandler;
 use crate::paste::KeyClient;
 use log::info;
 
-
 #[derive(Clone)]
 pub struct AppState {
     db: DatabaseHandler,
