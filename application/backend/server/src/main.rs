@@ -5,12 +5,9 @@ mod database;
 mod paste;
 
 use actix_web::{web, App, HttpServer};
-use app::state::AppState;
-use authorization::{log_user, register_user};
 use dotenv::dotenv;
 use env_logger;
 use log::info;
-use paste::{add_paste, delete_paste, get_paste, check_expiry};
 use std::env;
 
 #[actix_web::main]
@@ -19,7 +16,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
     dotenv().ok();
 
-    let app_state = AppState::new().await;
+    let app_state = app::state::AppState::new().await;
 
     let ip = env::var("SERVER_IP").unwrap();
     let port = env::var("SERVER_PORT").unwrap();
@@ -29,12 +26,13 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(app_state.clone()))
-            .service(log_user)
-            .service(register_user)
-            .service(add_paste)
-            .service(delete_paste)
-            .service(get_paste)
-            .service(check_expiry)
+            .service(authorization::log_user)
+            .service(authorization::register_user)
+            .service(paste::add_paste)
+            .service(paste::delete_paste)
+            .service(paste::get_paste)
+            .service(paste::check_expiry)
+            .service(paste::get_user_pastes)
     })
     .bind((ip, port.parse().unwrap()))?
     .run()
