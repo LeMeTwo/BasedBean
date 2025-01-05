@@ -9,14 +9,15 @@ spec:
     - protocol: TCP
       port: 6379
       targetPort: 6379
-  type: ClusterIP
+  clusterIP: None  # Wymagane dla StatefulSet
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: keydb-deployment
+  name: keydb
 spec:
-  replicas: 1
+  serviceName: "keydb"
+  replicas: 3  # 1 master i 2 slave
   selector:
     matchLabels:
       app: keydb
@@ -30,3 +31,40 @@ spec:
           image: eqalpha/keydb:latest
           ports:
             - containerPort: 6379
+          env:
+            - name: ROLE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          command:
+            - "/bin/bash"
+            - "-c"
+            - |
+              CONFIG_PATH="/etc/keydb/keydb.conf";
+              
+              echo "\n" >> $CONFIG_PATH;
+              echo "active-replica yes" >> $CONFIG_PATH;
+              echo "multi-master yes" >> $CONFIG_PATH;
+
+              # Zmienna, która wskazuje na innych masterów w systemie
+              if [[ "$(hostname)" == "keydb-0" ]]; then
+                echo "Starting as keydb-0";
+                /usr/local/bin/keydb-server /etc/keydb/keydb.conf --replicaof keydb-1.keydb 6379 --replicaof keydb-2.keydb 6379;
+              elif [[ "$(hostname)" == "keydb-1" ]]; then
+                echo "Starting as keydb-1";
+                /usr/local/bin/keydb-server /etc/keydb/keydb.conf --replicaof keydb-0.keydb 6379 --replicaof keydb-2.keydb 6379;
+              elif [[ "$(hostname)" == "keydb-2" ]]; then
+                echo "Starting as keydb-2";
+                /usr/local/bin/keydb-server /etc/keydb/keydb.conf --replicaof keydb-0.keydb 6379 --replicaof keydb-1.keydb 6379;
+              fi
+#          volumeMounts:
+#            - mountPath: /data
+#              name: keydb-data
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: keydb-data
+#      spec:
+#        accessModes: ["ReadWriteOnce"]
+#        resources:
+#          requests:
+#            storage: 1Gi
