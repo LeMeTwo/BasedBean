@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keg-service
+spec:
+  selector:
+    app: keg
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keg-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: keg
+  template:
+    metadata:
+      labels:
+        app: keg
+    spec:
+      containers:
+        - name: keg
+          image: local/basedbeankeg:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_ADDR
+              value: "keydb:6379"
+            - name: KEYDB_PORT
+              value: "6379"
+            - name: KEG_SCHEME
+              value: "http"  
+            - name: KEG_PORT
+              value: "8080"
+            - name: KEG_IP
+              value: "keg-service"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
