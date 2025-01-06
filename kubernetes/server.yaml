@@ -58,7 +58,7 @@ kind: CronJob
 metadata:
   name: expiry-checker
 spec:
-  schedule: "* * * * *" # Cron co godzinę, dostosuj według potrzeb
+  schedule: "0 4 * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 3
   jobTemplate:
