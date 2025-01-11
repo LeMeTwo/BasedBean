@@ -17,14 +17,13 @@ function Login() {
     const navigate = useNavigate();
 
     const handleSubmitForm = () => {
-        // console.log(JSON.stringify({user,password}))
         fetch("http://localhost:8090/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user, password }),
             credentials: "include",
         })
-            .then((response) => {
+            .then((response: Response) => {
                 if (!response.ok) throw new Error(response.status.toString());
                 else {
                     feedBack(response.status);
@@ -32,6 +31,7 @@ function Login() {
                 return response.json();
             })
             .then((data) => {
+                console.log("data catched");
                 Cookies.set("token", data.token, {
                     path: "/",
                     sameSite: "strict",
@@ -40,9 +40,8 @@ function Login() {
                 navigate("/");
                 location.reload();
             })
-            .catch((error) => {
-                feedBack(error.status);
-                console.log(error);
+            .catch((error: Error) => {
+                feedBack(Number(error.message));
             });
 
         setUser("");
@@ -52,8 +51,11 @@ function Login() {
     const feedBack = (check: number) => {
         if (check == 200) {
             setResult("Login succesfull");
-        } else {
+        } else if (check == 401) {
             setResult("Invalid login or password");
+        } else {
+            console.log(check);
+            setResult("Server error");
         }
     };
 
