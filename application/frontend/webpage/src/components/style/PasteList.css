@@ -1,4 +1,4 @@
-.containerHistory{
+.containerPasteList{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -10,10 +10,11 @@
     background-color: #1c1c1c;
     box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
 }
-.containerHistoryLinks{
+.containerPasteListLinks{
     display: flex;
     align-items: center;
     flex-direction: column-reverse;
+    gap: 0.5rem;
 }
 
 .noBullet{
