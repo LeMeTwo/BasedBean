@@ -1,18 +1,26 @@
 import "./style/Paste.css";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import Cookies from "js-cookie";
 
-function Paste() {
+function getHeaders() {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    const token: string | undefined = Cookies.get("token");
+    if (token !== undefined) {
+        headers.append("Authorization", "Bearer " + token);
+    }
+
+    return headers;
+}
+
+function Paste({ pasteKey }) {
     const [title, setTitle] = useState("");
     const [text, setText] = useState("");
 
-    const handleAuthorizeUser = () => {
-        // console.log(JSON.stringify({user,password}))
-        fetch("http://localhost:8090/paste", {
-            method: "POST",
-            headers: { "Content-Type": "authorization" },
-            body: JSON.stringify({ text, title }),
-            credentials: "include",
+    const getPaste = (key: string, setText: any, setTitle: any) => {
+        fetch("http://localhost:8090/paste/" + key, {
+            method: "GET",
         })
             .then((response) => {
                 if (!response.ok) throw new Error(response.status.toString());
@@ -21,35 +29,36 @@ function Paste() {
                 }
                 return response.json();
             })
-            .catch((error) => {
-                feedBack(error.status);
-                console.log(error);
+            .then((data) => {
+                setText(data.text);
+                setTitle(data.title);
+            })
+            .catch((error: Error) => {
+                feedBack(Number(error.message));
             });
     };
 
-    const handleSavePaste = () => {
-        // console.log(JSON.stringify({user,password}))
-        fetch("http://localhost:8090/paste", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text, title }),
-            credentials: "include",
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error(response.status.toString());
-                else {
-                    feedBack(response.status);
-                }
-                return response.json();
-            })
-            .catch((error) => {
-                feedBack(error.status);
-                console.log(error);
-            });
-    };
+    if (pasteKey !== undefined) {
+        getPaste(pasteKey, setText, setTitle);
+    }
 
     const savePaste = () => {
-        console.log("saved");
+        fetch("http://localhost:8090/paste", {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ text, title }),
+            credentials: "include",
+        })
+            .then((response) => {
+                if (!response.ok) throw new Error(response.status.toString());
+                else {
+                    feedBack(response.status);
+                }
+                return response.json();
+            })
+            .catch((error: Error) => {
+                feedBack(Number(error.message));
+            });
     };
 
     const cleanPaste = () => {
