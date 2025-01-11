@@ -39,7 +39,7 @@ spec:
             - name: MONGODB_PORT
               value: "27017"
             - name: MONGODB_IP
-              value: "mongo-service"
+              value: "mongodb-service"
             - name: KEG_SCHEME
               value: "http"
             - name: KEG_PORT
