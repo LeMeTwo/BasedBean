@@ -1,7 +1,7 @@
 import "./style/LogReg.css";
 import "./style/Universal.css";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 
