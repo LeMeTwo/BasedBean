@@ -1,8 +1,10 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./style/Navbar.css";
 import "./style/Universal.css";
 function Navbar() {
+    const navigate = useNavigate();
+
     function IsTokenThere() {
         if (Cookies.get("token") == undefined) {
             return (
@@ -30,6 +32,7 @@ function Navbar() {
                         className="styleButton"
                         onClick={() => {
                             Cookies.remove("token");
+                            navigate("/");
                             location.reload();
                         }}
                     >
@@ -43,7 +46,7 @@ function Navbar() {
     return (
         <>
             <div className="containerNav">
-                <Link to="/">
+                <Link to="/home">
                     <button className="styleButton">Home</button>
                 </Link>
 

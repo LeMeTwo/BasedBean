@@ -8,19 +8,6 @@
     margin-bottom: 1em;
     box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
 }
-/* .buttonNav{
-    background-color: #282c34;
-    border: none;
-    border-radius: 15px;
-    color: #FFF0D1;
-    padding: 12px ;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 18px; 
-    font-weight: bold; 
-    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
-} */
 
 @media (max-width: 450px) {
     .containerNav {
