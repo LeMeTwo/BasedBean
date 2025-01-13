@@ -1,9 +1,9 @@
-import History from "./History";
+import PasteList from "./PasteList";
 function Profile() {
     return (
         <>
             <h1>Profile</h1>
-            <History />
+            <PasteList />
         </>
     );
 }
