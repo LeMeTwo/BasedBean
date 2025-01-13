@@ -1,7 +1,7 @@
 import "./style/LogReg.css";
 import "./style/Universal.css";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
