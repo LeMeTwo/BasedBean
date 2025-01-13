@@ -24,9 +24,6 @@ function Paste({ pasteKey }) {
         })
             .then((response) => {
                 if (!response.ok) throw new Error(response.status.toString());
-                else {
-                    feedBack(response.status);
-                }
                 return response.json();
             })
             .then((data) => {
@@ -34,7 +31,7 @@ function Paste({ pasteKey }) {
                 setTitle(data.title);
             })
             .catch((error: Error) => {
-                feedBack(Number(error.message));
+                console.log(Number(error.message));
             });
     };
 
@@ -51,26 +48,15 @@ function Paste({ pasteKey }) {
         })
             .then((response) => {
                 if (!response.ok) throw new Error(response.status.toString());
-                else {
-                    feedBack(response.status);
-                }
                 return response.json();
             })
             .catch((error: Error) => {
-                feedBack(Number(error.message));
+                console.log(Number(error.message));
             });
     };
 
     const cleanPaste = () => {
         setText("");
-    };
-
-    const feedBack = (check: number) => {
-        if (check == 201) {
-            console.log("Paste save succesfull");
-        } else {
-            console.log("Couldn't save paste");
-        }
     };
 
     return (
