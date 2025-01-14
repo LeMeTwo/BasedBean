@@ -1,0 +1,88 @@
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
+
+.containerPaste{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap:1rem;
+    border-radius: 1.5rem;
+    padding: 1rem 1rem;
+    color: #FFF0D1;
+    background-color: #1c1c1c;
+    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+}
+
+.containerButtons{
+    display: flex;
+    gap: 1em;
+}
+
+
+.styleTitle{
+    resize: none;
+    outline: none;
+    background-color: #282c34;
+    border-radius: 10px;
+    border-width: 0;
+    padding: 10px;
+    color: #FFF0D1;
+    font-size: 18px; 
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+}
+
+.styleTitle:hover{
+    cursor: pointer;
+    background-color: #2d3138;
+}
+
+.styleTitle:focus{
+    cursor: text;
+}
+
+
+.stylePaste{
+    width:70vw;
+    height:50vh;
+    resize: none;
+    outline: none;
+    background-color: #282c34;
+    border-radius: 10px;
+    border:0px;
+    padding: 0.5em;
+    color: #FFF0D1;
+    font-size: 18px; 
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+}
+.stylePaste:hover{
+    cursor: pointer;
+    background-color: #2d3138;
+
+}
+.stylestylePaste:focus{
+    cursor: text;
+}
+
+
+.styleButton{
+    background-color: #282c34;
+    border: none;
+    border-radius: 15px;
+    color: #FFF0D1;
+    padding: 12px ;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px; 
+    font-weight: bold; 
+    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+}
