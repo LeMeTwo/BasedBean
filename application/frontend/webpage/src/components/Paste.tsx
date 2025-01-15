@@ -1,99 +1,98 @@
 import "./style/Paste.css";
+import "./style/Universal.css";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import Cookies from "js-cookie";
 
-function Paste() {
+function getHeaders() {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    const token: string | undefined = Cookies.get("token");
+    if (token !== undefined) {
+        headers.append("Authorization", "Bearer " + token);
+    }
+
+    return headers;
+}
+
+function getPaste(key: string, setText: any, setTitle: any) {
+    fetch("http://localhost:8090/paste/" + key, {
+        method: "GET",
+    })
+        .then((response) => {
+            if (!response.ok) throw new Error(response.status.toString());
+            return response.json();
+        })
+        .then((data) => {
+            setText(data.text);
+            setTitle(data.title);
+        })
+        .catch((error: Error) => {
+            console.log(Number(error.message));
+        });
+}
+
+function createPaste(text: string, title: string) {
+    fetch("http://localhost:8090/paste", {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({ text, title }),
+        credentials: "include",
+    })
+        .then((response) => {
+            if (!response.ok) throw new Error(response.status.toString());
+            return response.json();
+        })
+        .catch((error: Error) => {
+            console.log(Number(error.message));
+        });
+}
+
+function cleanContent(setText: any) {
+    setText("");
+}
+
+function Paste({ pasteKey }: any) {
     const [title, setTitle] = useState("");
     const [text, setText] = useState("");
 
-    const handleAuthorizeUser = () => {
-        // console.log(JSON.stringify({user,password}))
-        fetch("http://localhost:8090/paste", {
-            method: "POST",
-            headers: { "Content-Type": "authorization" },
-            body: JSON.stringify({ text, title }),
-            credentials: "include",
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error(response.status.toString());
-                else {
-                    feedBack(response.status);
-                }
-                return response.json();
-            })
-            .catch((error) => {
-                feedBack(error.status);
-                console.log(error);
-            });
-    };
-
-    const handleSavePaste = () => {
-        // console.log(JSON.stringify({user,password}))
-        fetch("http://localhost:8090/paste", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text, title }),
-            credentials: "include",
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error(response.status.toString());
-                else {
-                    feedBack(response.status);
-                }
-                return response.json();
-            })
-            .catch((error) => {
-                feedBack(error.status);
-                console.log(error);
-            });
-    };
-
-    const savePaste = () => {
-        console.log("saved");
-    };
-
-    const cleanPaste = () => {
-        setText("");
-    };
-
-    const feedBack = (check: number) => {
-        if (check == 201) {
-            console.log("Paste save succesfull");
-        } else {
-            console.log("Couldn't save paste");
-        }
-    };
+    if (pasteKey !== undefined) {
+        getPaste(pasteKey, setText, setTitle);
+    }
 
     return (
         <>
-            <div className="containerPaste">
-                <h1 className="noselect">Your Paste</h1>
+            <div className="container-paste noselect">
+                <h1 className="container-paste__header">Your Paste</h1>
                 <input
-                    className="styleTitle noselect"
+                    className="input-title"
                     placeholder="Title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
+
                 <textarea
-                    className="stylePaste noselect"
+                    className="input-text"
                     placeholder="Content..."
                     wrap="hard"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                 ></textarea>
-                <div className="containerButtons">
+
+                <div className="container-paste__buttons">
                     <button
-                        className="styleButton noselect"
-                        onClick={savePaste}
+                        className="button"
+                        onClick={() => createPaste(text, title)}
                     >
                         Create paste
                     </button>
+
                     <button
-                        className="styleButton noselect"
-                        onClick={cleanPaste}
+                        className="button"
+                        onClick={() => cleanContent(setText)}
                     >
-                        Clean paste
+                        Clean content
                     </button>
                 </div>
             </div>

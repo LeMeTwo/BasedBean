@@ -1,7 +1,7 @@
 import "./style/LogReg.css";
 import "./style/Universal.css";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
@@ -17,14 +17,13 @@ function Login() {
     const navigate = useNavigate();
 
     const handleSubmitForm = () => {
-        // console.log(JSON.stringify({user,password}))
         fetch("http://localhost:8090/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user, password }),
             credentials: "include",
         })
-            .then((response) => {
+            .then((response: Response) => {
                 if (!response.ok) throw new Error(response.status.toString());
                 else {
                     feedBack(response.status);
@@ -32,6 +31,7 @@ function Login() {
                 return response.json();
             })
             .then((data) => {
+                console.log("data catched");
                 Cookies.set("token", data.token, {
                     path: "/",
                     sameSite: "strict",
@@ -40,9 +40,8 @@ function Login() {
                 navigate("/");
                 location.reload();
             })
-            .catch((error) => {
-                feedBack(error.status);
-                console.log(error);
+            .catch((error: Error) => {
+                feedBack(Number(error.message));
             });
 
         setUser("");
@@ -52,20 +51,23 @@ function Login() {
     const feedBack = (check: number) => {
         if (check == 200) {
             setResult("Login succesfull");
-        } else {
+        } else if (check == 401) {
             setResult("Invalid login or password");
+        } else {
+            console.log(check);
+            setResult("Server error");
         }
     };
 
     return (
-        <div className="containerOuterForm">
-            <div className="containerForm">
+        <>
+            <div className="container-credentials">
                 <h1 className="noselect">Login</h1>
 
-                <div className="containerInputField">
+                <div className="container-credentials__inputs">
                     <FaUser className="icon" />
                     <input
-                        className="inputField"
+                        className="input-field"
                         type="text"
                         value={user}
                         placeholder="user"
@@ -73,10 +75,10 @@ function Login() {
                     />
                 </div>
 
-                <div className="containerInputField">
+                <div className="container-credentials__inputs">
                     <FaLock className="icon" />
                     <input
-                        className="inputField"
+                        className="input-field"
                         type="password"
                         value={password}
                         placeholder="password"
@@ -85,12 +87,12 @@ function Login() {
                 </div>
 
                 <label htmlFor="userField"></label>
-                <button className="styleButton" onClick={handleSubmitForm}>
+                <button className="button" onClick={handleSubmitForm}>
                     Submit
                 </button>
                 <p className="noselect">{result}</p>
             </div>
-        </div>
+        </>
     );
 }
 

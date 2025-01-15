@@ -1,13 +1,8 @@
-.containerOuterForm{
+.container-credentials{
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    flex-direction: column;
-}
-
-.containerForm{
-    display: flex;
-    flex-direction: column;
+    align-items: center;
     gap:1rem;
     border-radius: 1.5rem;
     padding: 1rem 1rem;
@@ -16,13 +11,13 @@
     box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
 }
 
-.containerInputField{
+.container-credentials__inputs{
     display: flex;
     flex-direction: row;
     gap:1rem;
 }
 
-.inputField{
+.input-field{
     resize: none;
     outline: none;
     background-color: #282c34;
@@ -36,13 +31,13 @@
 
 }
 
-.inputField:hover{
+.input-field:hover{
     cursor: pointer;
     background-color: #2d3138;
   
 }
 
-.inputField:focus{
+.input-field:focus{
     cursor: text;
 }
 
@@ -51,3 +46,6 @@
     color: #FFF0D1;
 }
 
+.list-rules{
+    font-size: 12px;
+}
