@@ -8,6 +8,8 @@
 .containerForm{
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     gap:1rem;
     border-radius: 1.5rem;
     padding: 1rem 1rem;
@@ -51,3 +53,6 @@
     color: #FFF0D1;
 }
 
+.listRules{
+    font-size: 12px;
+}

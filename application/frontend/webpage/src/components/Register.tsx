@@ -5,92 +5,98 @@ import { useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 
-function Register() {
-    const USER_REGEX = /^[A-z0-9-_]$/;
+function passwordChecker(pwd: string, setPassword: any, setPassFlag: any) {
+    setPassword(pwd);
 
-    // console.log(USER_REGEX.test(lineToTest));
     const PASSWORD_REGEX_CAP = /[A-Z]+/;
     const PASSWORD_REGEX_LOW = /[a-z]+/;
     const PASSWORD_REGEX_NUM = /[0-9]+/;
 
+    let flagPwdLen = false;
+    let flagPwdNum = false;
+    let flagPwdCap = false;
+    let flagPwdLow = false;
+
+    // Check for at least one capital letter
+    if (PASSWORD_REGEX_CAP.test(pwd)) {
+        flagPwdCap = true;
+        document.getElementById("pwdUpper")!.style.color = "#FFF0D1";
+    } else {
+        document.getElementById("pwdUpper")!.style.color = "#d55e5e";
+    }
+    // Check for at least one lowercase letter
+    if (PASSWORD_REGEX_LOW.test(pwd)) {
+        flagPwdLow = true;
+        document.getElementById("pwdLower")!.style.color = "#FFF0D1";
+    } else {
+        document.getElementById("pwdLower")!.style.color = "#d55e5e";
+    }
+    // Check for at least one number
+    if (PASSWORD_REGEX_NUM.test(pwd)) {
+        flagPwdNum = true;
+        document.getElementById("pwdNum")!.style.color = "#FFF0D1";
+    } else {
+        document.getElementById("pwdNum")!.style.color = "#d55e5e";
+    }
+    // Check for length > 6
+    if (pwd.length > 6) {
+        flagPwdLen = true;
+        document.getElementById("pwdLen")!.style.color = "#FFF0D1";
+    } else {
+        document.getElementById("pwdLen")!.style.color = "#d55e5e";
+    }
+    setPassFlag(flagPwdCap && flagPwdLow && flagPwdNum && flagPwdLen);
+}
+
+function userChecker(usr: string, setUsername: any, setUserFlag: any) {
+    setUsername(usr);
+
+    const USER_REGEX = /^[A-Za-z0-9-_]+/;
+
+    let flagUsrChar = false;
+    let flagUsrLen = false;
+
+    // Check for invalid characters
+    if (USER_REGEX.test(usr)) {
+        document.getElementById("usrValid")!.style.color = "#FFF0D1";
+        flagUsrChar = true;
+    } else {
+        document.getElementById("usrValid")!.style.color = "#d55e5e";
+    }
+
+    // Check username length
+    if (usr.length > 3 && usr.length < 20) {
+        flagUsrLen = true;
+        document.getElementById("usrLen")!.style.color = "#FFF0D1";
+    } else {
+        document.getElementById("usrLen")!.style.color = "#d55e5e";
+    }
+
+    setUserFlag(flagUsrChar && flagUsrLen);
+}
+
+const feedBack = (check: number, setResult: any) => {
+    if (check == 201) {
+        setResult("Creation succesfull");
+    } else {
+        setResult("User name already taken");
+    }
+};
+
+function Register() {
     const [user, setUser] = useState("");
     const [password, setPwd] = useState("");
-    const [result, setResult] = useState("Quickly register!");
-    const [userObs, setUserObs] = useState("");
-    const [pwdObs, setPwdObs] = useState("");
+
+    const [result, setResult] = useState("");
 
     const [flagUser, setFlagUser] = useState(false);
     const [flagPwd, setFlagPwd] = useState(false);
 
     const navigate = useNavigate();
 
-    function userObserver(usr: string) {
-        setUser(usr);
-        let flagUsrChar = false;
-        let flagUsrLen = false;
-
-        if (USER_REGEX.test(usr)) {
-            console.log("Allowed A-z,0-9,-_");
-            flagUsrChar = true;
-        } else {
-            console.log("Wrong");
-        }
-
-        if (usr.length == 0) {
-            setUserObs("");
-        } else if (usr.length < 4) {
-            setUserObs("Username too short");
-        } else if (usr.length > 20) {
-            setUserObs("Username too long");
-        } else {
-            flagUsrLen = true;
-            setUserObs(usr.length.toString());
-        }
-
-        setFlagUser(flagUsrChar && flagUsrLen);
-    }
-
-    function pwdObserver(pwd: string) {
-        setPwd(pwd);
-        let flagPwdLen = false;
-        let flagPwdNum = false;
-        let flagPwdCap = false;
-        let flagPwdLow = false;
-
-        if (PASSWORD_REGEX_CAP.test(pwd)) {
-            console.log("At least one upper case letter");
-            flagPwdCap = true;
-        } else {
-            console.log("Wrong");
-        }
-
-        if (PASSWORD_REGEX_LOW.test(pwd)) {
-            console.log("At least one smol lowercase letter");
-            flagPwdLow = true;
-        } else {
-            console.log("Wrong");
-        }
-        if (PASSWORD_REGEX_NUM.test(pwd)) {
-            console.log("At least one number");
-            flagPwdNum = true;
-        } else {
-            console.log("Wrong");
-        }
-
-        if (pwd.length == 0) {
-            setPwdObs("");
-        } else if (pwd.length < 4) {
-            setPwdObs("Password too short");
-        } else {
-            setPwdObs(pwd.length.toString());
-            flagPwdLen = true;
-        }
-        setFlagPwd(flagPwdCap && flagPwdLow && flagPwdNum && flagPwdLen);
-    }
-
-    const handleSubmitForm = () => {
+    function submitCredentials() {
         if (!flagUser || !flagPwd) {
-            setResult("Invalid data");
+            setResult("Invalid Credentials");
             return;
         }
 
@@ -103,30 +109,20 @@ function Register() {
             .then((response) => {
                 if (!response.ok) throw new Error(response.status.toString());
                 else {
-                    feedBack(response.status);
+                    feedBack(response.status, setResult);
                     navigate("/login");
                 }
                 return response.json();
             })
             .catch((error) => {
-                feedBack(error.status);
+                feedBack(error.status, setResult);
                 console.log(error);
             });
 
+        // Reset user and password fields
         setUser("");
         setPwd("");
-
-        setUserObs("");
-        setPwdObs("");
-    };
-
-    const feedBack = (check: number) => {
-        if (check == 201) {
-            setResult("Creation succesfull");
-        } else {
-            setResult("User name already taken");
-        }
-    };
+    }
 
     return (
         <div className="containerOuterForm">
@@ -139,10 +135,18 @@ function Register() {
                         type="text"
                         value={user}
                         placeholder="user"
-                        onChange={(e) => userObserver(e.target.value)}
+                        onChange={(e) =>
+                            userChecker(e.target.value, setUser, setFlagUser)
+                        }
                     />
                 </div>
-                <label>{userObs}</label>
+                <ul className="noselect listRules">
+                    <li id="usrValid">Valid characters</li>
+                    <li id="usrLen">
+                        Longer than 3 characters
+                        <br /> shorter than 20
+                    </li>
+                </ul>
 
                 <div className="containerInputField">
                     <FaLock className="icon" />
@@ -151,13 +155,21 @@ function Register() {
                         type="password"
                         value={password}
                         placeholder="password"
-                        onChange={(e) => pwdObserver(e.target.value)}
+                        onChange={(e) =>
+                            passwordChecker(e.target.value, setPwd, setFlagPwd)
+                        }
                     />
                 </div>
-                <label>{pwdObs}</label>
+
+                <ul className="noselect listRules">
+                    <li id="pwdUpper">One upper case letter</li>
+                    <li id="pwdLower">One lower case letter</li>
+                    <li id="pwdNum">One number</li>
+                    <li id="pwdLen">Longer than 6 characters</li>
+                </ul>
 
                 <label htmlFor="userField"></label>
-                <button className="styleButton" onClick={handleSubmitForm}>
+                <button className="styleButton" onClick={submitCredentials}>
                     Submit
                 </button>
                 <p className="noselect">{result}</p>
