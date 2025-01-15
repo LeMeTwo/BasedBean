@@ -1,4 +1,4 @@
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./style/Navbar.css";
 import "./style/Universal.css";
@@ -10,13 +10,11 @@ function Navbar() {
             return (
                 <>
                     <Link to="login">
-                        <button className="styleButton noselect">Login</button>
+                        <button className="button noselect">Login</button>
                     </Link>
 
                     <Link to="register">
-                        <button className="styleButton noselect">
-                            Register
-                        </button>
+                        <button className="button noselect">Register</button>
                     </Link>
                 </>
             );
@@ -24,12 +22,10 @@ function Navbar() {
             return (
                 <>
                     <Link to="profile">
-                        <button className="styleButton noselect">
-                            Profile
-                        </button>
+                        <button className="button noselect">Profile</button>
                     </Link>
                     <button
-                        className="styleButton"
+                        className="button"
                         onClick={() => {
                             Cookies.remove("token");
                             navigate("/");
@@ -45,14 +41,12 @@ function Navbar() {
 
     return (
         <>
-            <div className="containerNav noselect">
+            <div className="container-nav noselect">
                 <Link to="/home">
-                    <button className="styleButton">Home</button>
+                    <button className="button">Home</button>
                 </Link>
-
                 <IsTokenThere />
             </div>
-            <Outlet />
         </>
     );
 }

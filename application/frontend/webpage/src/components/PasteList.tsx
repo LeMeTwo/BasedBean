@@ -45,20 +45,19 @@ function PasteList() {
     const list = getPastes();
 
     return (
-        <div className="containerPasteList">
-            <h1>My Pastes</h1>
+        <div className="container-pastelist">
             {list.length === 0 && <p>No pastes</p>}
-            <ul className="containerPasteListLinks">
-                {list.map((item) => (
+            <ul className="container-pastelist__links">
+                {list.map((item: any) => (
                     <li className="noBullet" key={item.key}>
                         <button
-                            className="styleButton"
+                            className="button"
                             onClick={() => loadPaste(item.key, navigate)}
                         >
                             {item.title}
                         </button>
                         <button
-                            className="styleButton"
+                            className="button"
                             onClick={() => deletePaste(item.key)}
                         >
                             Delete

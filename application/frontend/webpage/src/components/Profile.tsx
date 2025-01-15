@@ -1,10 +1,11 @@
+import "./style/Profile.css";
 import PasteList from "./PasteList";
 function Profile() {
     return (
-        <>
-            <h1>Profile</h1>
+        <div className="container-profile">
+            <h1>My Pastes</h1>
             <PasteList />
-        </>
+        </div>
     );
 }
 

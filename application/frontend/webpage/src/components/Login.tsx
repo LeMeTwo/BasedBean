@@ -60,14 +60,14 @@ function Login() {
     };
 
     return (
-        <div className="containerOuterForm noselect ">
-            <div className="containerForm">
+        <>
+            <div className="container-credentials">
                 <h1 className="noselect">Login</h1>
 
-                <div className="containerInputField">
+                <div className="container-credentials__inputs">
                     <FaUser className="icon" />
                     <input
-                        className="inputField"
+                        className="input-field"
                         type="text"
                         value={user}
                         placeholder="user"
@@ -75,10 +75,10 @@ function Login() {
                     />
                 </div>
 
-                <div className="containerInputField">
+                <div className="container-credentials__inputs">
                     <FaLock className="icon" />
                     <input
-                        className="inputField"
+                        className="input-field"
                         type="password"
                         value={password}
                         placeholder="password"
@@ -87,12 +87,12 @@ function Login() {
                 </div>
 
                 <label htmlFor="userField"></label>
-                <button className="styleButton" onClick={handleSubmitForm}>
+                <button className="button" onClick={handleSubmitForm}>
                     Submit
                 </button>
                 <p className="noselect">{result}</p>
             </div>
-        </div>
+        </>
     );
 }
 

@@ -1,4 +1,5 @@
-.containerPasteList{
+.container-pastelist{
+    min-width: 70vw;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -7,13 +8,13 @@
     border-radius: 1.5rem;
     padding: 1rem 1rem;
     color: #FFF0D1;
-    background-color: #1c1c1c;
-    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+    box-shadow: 0 0.1rem 0.4rem rgba(15, 15, 15, 0.6);
 }
-.containerPasteListLinks{
+.container-pastelist__links{
     display: flex;
     align-items: center;
     flex-direction: column-reverse;
+    background-color: #282c34;
     gap: 0.5rem;
 }
 

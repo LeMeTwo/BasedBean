@@ -125,13 +125,13 @@ function Register() {
     }
 
     return (
-        <div className="containerOuterForm noselect">
-            <div className="containerForm">
+        <>
+            <div className="container-credentials">
                 <h1>Register</h1>
-                <div className="containerInputField">
+                <div className="container-credentials__inputs">
                     <FaUser className="icon" />
                     <input
-                        className="inputField"
+                        className="input-field"
                         type="text"
                         value={user}
                         placeholder="user"
@@ -140,7 +140,7 @@ function Register() {
                         }
                     />
                 </div>
-                <ul className="listRules">
+                <ul className="list-rules">
                     <li id="usrValid">Valid characters</li>
                     <li id="usrLen">
                         Longer than 3 characters
@@ -148,10 +148,10 @@ function Register() {
                     </li>
                 </ul>
 
-                <div className="containerInputField">
+                <div className="container-credentials__inputs">
                     <FaLock className="icon" />
                     <input
-                        className="inputField"
+                        className="input-field"
                         type="password"
                         value={password}
                         placeholder="password"
@@ -161,7 +161,7 @@ function Register() {
                     />
                 </div>
 
-                <ul className="listRules">
+                <ul className="list-rules">
                     <li id="pwdUpper">One upper case letter</li>
                     <li id="pwdLower">One lower case letter</li>
                     <li id="pwdNum">One number</li>
@@ -169,12 +169,12 @@ function Register() {
                 </ul>
 
                 <label htmlFor="userField"></label>
-                <button className="styleButton" onClick={submitCredentials}>
+                <button className="button" onClick={submitCredentials}>
                     Submit
                 </button>
                 <p>{result}</p>
             </div>
-        </div>
+        </>
     );
 }
 

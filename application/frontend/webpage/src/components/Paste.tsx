@@ -62,31 +62,34 @@ function Paste({ pasteKey }: any) {
 
     return (
         <>
-            <div className="containerPaste noselect">
-                <h1>Your Paste</h1>
+            <div className="container-paste noselect">
+                <h1 className="container-paste__header">Your Paste</h1>
                 <input
-                    className="styleTitle"
+                    className="input-title"
                     placeholder="Title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
+
                 <textarea
-                    className="stylePaste"
+                    className="input-text"
                     placeholder="Content..."
                     wrap="hard"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                 ></textarea>
-                <div className="containerButtons">
+
+                <div className="container-paste__buttons">
                     <button
-                        className="styleButton"
+                        className="button"
                         onClick={() => createPaste(text, title)}
                     >
                         Create paste
                     </button>
+
                     <button
-                        className="styleButton"
+                        className="button"
                         onClick={() => cleanContent(setText)}
                     >
                         Clean content
