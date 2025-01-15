@@ -125,9 +125,9 @@ function Register() {
     }
 
     return (
-        <div className="containerOuterForm">
+        <div className="containerOuterForm noselect">
             <div className="containerForm">
-                <h1 className="noselect">Register</h1>
+                <h1>Register</h1>
                 <div className="containerInputField">
                     <FaUser className="icon" />
                     <input
@@ -140,7 +140,7 @@ function Register() {
                         }
                     />
                 </div>
-                <ul className="noselect listRules">
+                <ul className="listRules">
                     <li id="usrValid">Valid characters</li>
                     <li id="usrLen">
                         Longer than 3 characters
@@ -161,7 +161,7 @@ function Register() {
                     />
                 </div>
 
-                <ul className="noselect listRules">
+                <ul className="listRules">
                     <li id="pwdUpper">One upper case letter</li>
                     <li id="pwdLower">One lower case letter</li>
                     <li id="pwdNum">One number</li>
@@ -172,7 +172,7 @@ function Register() {
                 <button className="styleButton" onClick={submitCredentials}>
                     Submit
                 </button>
-                <p className="noselect">{result}</p>
+                <p>{result}</p>
             </div>
         </div>
     );

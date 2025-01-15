@@ -45,7 +45,7 @@ function Navbar() {
 
     return (
         <>
-            <div className="containerNav">
+            <div className="containerNav noselect">
                 <Link to="/home">
                     <button className="styleButton">Home</button>
                 </Link>

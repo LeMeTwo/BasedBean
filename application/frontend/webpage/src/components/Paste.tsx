@@ -1,4 +1,5 @@
 import "./style/Paste.css";
+import "./style/Universal.css";
 import { useState } from "react";
 import Cookies from "js-cookie";
 
@@ -61,33 +62,27 @@ function Paste({ pasteKey }) {
 
     return (
         <>
-            <div className="containerPaste">
-                <h1 className="noselect">Your Paste</h1>
+            <div className="containerPaste noselect">
+                <h1>Your Paste</h1>
                 <input
-                    className="styleTitle noselect"
+                    className="styleTitle"
                     placeholder="Title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
                 <textarea
-                    className="stylePaste noselect"
+                    className="stylePaste"
                     placeholder="Content..."
                     wrap="hard"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                 ></textarea>
                 <div className="containerButtons">
-                    <button
-                        className="styleButton noselect"
-                        onClick={savePaste}
-                    >
+                    <button className="styleButton" onClick={savePaste}>
                         Create paste
                     </button>
-                    <button
-                        className="styleButton noselect"
-                        onClick={cleanPaste}
-                    >
+                    <button className="styleButton" onClick={cleanPaste}>
                         Clean paste
                     </button>
                 </div>
