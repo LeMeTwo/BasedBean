@@ -15,50 +15,50 @@ function getHeaders() {
     return headers;
 }
 
-function Paste({ pasteKey }) {
+function getPaste(key: string, setText: any, setTitle: any) {
+    fetch("http://localhost:8090/paste/" + key, {
+        method: "GET",
+    })
+        .then((response) => {
+            if (!response.ok) throw new Error(response.status.toString());
+            return response.json();
+        })
+        .then((data) => {
+            setText(data.text);
+            setTitle(data.title);
+        })
+        .catch((error: Error) => {
+            console.log(Number(error.message));
+        });
+}
+
+function createPaste(text: string, title: string) {
+    fetch("http://localhost:8090/paste", {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({ text, title }),
+        credentials: "include",
+    })
+        .then((response) => {
+            if (!response.ok) throw new Error(response.status.toString());
+            return response.json();
+        })
+        .catch((error: Error) => {
+            console.log(Number(error.message));
+        });
+}
+
+function cleanContent(setText: any) {
+    setText("");
+}
+
+function Paste({ pasteKey }: any) {
     const [title, setTitle] = useState("");
     const [text, setText] = useState("");
-
-    const getPaste = (key: string, setText: any, setTitle: any) => {
-        fetch("http://localhost:8090/paste/" + key, {
-            method: "GET",
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error(response.status.toString());
-                return response.json();
-            })
-            .then((data) => {
-                setText(data.text);
-                setTitle(data.title);
-            })
-            .catch((error: Error) => {
-                console.log(Number(error.message));
-            });
-    };
 
     if (pasteKey !== undefined) {
         getPaste(pasteKey, setText, setTitle);
     }
-
-    const savePaste = () => {
-        fetch("http://localhost:8090/paste", {
-            method: "POST",
-            headers: getHeaders(),
-            body: JSON.stringify({ text, title }),
-            credentials: "include",
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error(response.status.toString());
-                return response.json();
-            })
-            .catch((error: Error) => {
-                console.log(Number(error.message));
-            });
-    };
-
-    const cleanPaste = () => {
-        setText("");
-    };
 
     return (
         <>
@@ -79,11 +79,17 @@ function Paste({ pasteKey }) {
                     onChange={(e) => setText(e.target.value)}
                 ></textarea>
                 <div className="containerButtons">
-                    <button className="styleButton" onClick={savePaste}>
+                    <button
+                        className="styleButton"
+                        onClick={() => createPaste(text, title)}
+                    >
                         Create paste
                     </button>
-                    <button className="styleButton" onClick={cleanPaste}>
-                        Clean paste
+                    <button
+                        className="styleButton"
+                        onClick={() => cleanContent(setText)}
+                    >
+                        Clean content
                     </button>
                 </div>
             </div>
