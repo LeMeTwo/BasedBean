@@ -9,7 +9,7 @@ spec:
     - protocol: TCP
       port: 8090
       targetPort: 8090
-  type: NodePort
+  #type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment

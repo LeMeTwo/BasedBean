@@ -14,7 +14,7 @@ FROM nginx:1.25-alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY webpage/vite.config.ts /app/vite.config.ts
-# Kopiowanie pliku konfiguracyjnego Nginx
+# Kopiowanie pliku konfiguracyjnego Nginx - WAŻNE
 COPY webpage/nginx.conf /etc/nginx/nginx.conf
 
 # Kopiowanie skryptu uruchamiającego
