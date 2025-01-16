@@ -3,7 +3,7 @@
 # Generowanie mongodb-keyfile i tworzenie sekretu
 echo "Generowanie mongodb-keyfile..."
 sudo bash -c "openssl rand -base64 756 > mongodb-keyfile"
-sudo chmod 400 mongodb-keyfile
+sudo chmod 766 mongodb-keyfile
 
 echo "Tworzenie sekretu Kubernetes..."
 kubectl create secret generic mongodb-keyfile --from-file=mongodb-keyfile
@@ -21,10 +21,6 @@ echo "Czekam, aż wszystkie pody StatefulSet mongodb będą gotowe..."
 for pod in mongodb-0 mongodb-1 mongodb-2; do
   kubectl wait --for=condition=ready pod/$pod --timeout=180s
 done
-
-# Oczekiwanie na CronJob
-echo "Czekam, aż CronJob mongodb-backup będzie dostępny..."
-kubectl wait --for=condition=complete --timeout=120s job --selector=job-name=mongodb-backup
 
 # Inicjalizacja repliki MongoDB
 echo "Inicjalizacja repliki MongoDB..."
