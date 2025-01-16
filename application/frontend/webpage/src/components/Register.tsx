@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 
+const ip = import.meta.env.VITE_SERVER_IP;
+const port = import.meta.env.VITE_SERVER_PORT;
+
 function passwordChecker(pwd: string, setPassword: any, setPassFlag: any) {
     setPassword(pwd);
 
@@ -100,7 +103,7 @@ function Register() {
             return;
         }
 
-        fetch("http://localhost:8090/register", {
+        fetch("http://" + ip + ":" + port + "/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user, password }),
