@@ -6,18 +6,17 @@ import { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 
+const ip = import.meta.env.VITE_SERVER_IP;
+const port = import.meta.env.VITE_SERVER_PORT;
+
 function Login() {
-    // const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-    // const lineToTest = "testline"
-    // console.log(USER_REGEX.test(lineToTest));
-    // const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
     const [user, setUser] = useState("");
     const [password, setPwd] = useState("");
     const [result, setResult] = useState("Quickly login!");
     const navigate = useNavigate();
 
     const handleSubmitForm = () => {
-        fetch("http://localhost:8090/login", {
+        fetch("http://" + ip + ":" + port + "/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user, password }),

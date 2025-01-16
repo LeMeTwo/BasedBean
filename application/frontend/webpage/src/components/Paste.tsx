@@ -3,6 +3,9 @@ import "./style/Universal.css";
 import { useState } from "react";
 import Cookies from "js-cookie";
 
+const ip = import.meta.env.VITE_SERVER_IP;
+const port = import.meta.env.VITE_SERVER_PORT;
+
 function getHeaders() {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -16,7 +19,7 @@ function getHeaders() {
 }
 
 function getPaste(key: string, setText: any, setTitle: any) {
-    fetch("http://localhost:8090/paste/" + key, {
+    fetch("http://" + ip + ":" + port + "/paste/" + key, {
         method: "GET",
     })
         .then((response) => {
@@ -33,7 +36,7 @@ function getPaste(key: string, setText: any, setTitle: any) {
 }
 
 function createPaste(text: string, title: string) {
-    fetch("http://localhost:8090/paste", {
+    fetch("http://" + ip + ":" + port + "/paste", {
         method: "POST",
         headers: getHeaders(),
         body: JSON.stringify({ text, title }),

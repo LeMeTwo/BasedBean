@@ -3,8 +3,11 @@ import "./style/Universal.css";
 import Cookies from "js-cookie";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
+const ip = import.meta.env.VITE_SERVER_IP;
+const port = import.meta.env.VITE_SERVER_PORT;
+
 function getPastes() {
-    fetch("http://localhost:8090/user/pastes", {
+    fetch("http://" + ip + ":" + port + "/user/pastes", {
         method: "GET",
         headers: { Authorization: "Bearer " + Cookies.get("token") },
     })
@@ -26,7 +29,7 @@ function loadPaste(key: string, navigate: NavigateFunction) {
 }
 
 function deletePaste(key: string) {
-    fetch("http://localhost:8090/paste/" + key, {
+    fetch("http://" + ip + ":" + port + "/paste/" + key, {
         method: "DELETE",
         headers: { Authorization: "Bearer " + Cookies.get("token") },
         credentials: "include",
