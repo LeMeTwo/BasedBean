@@ -1,7 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 import "./style/Navbar.css";
 import "./style/Universal.css";
+import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+
 function Navbar() {
     const navigate = useNavigate();
 
