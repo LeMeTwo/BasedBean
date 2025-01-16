@@ -16,7 +16,12 @@ spec:
     spec:
       containers:
       - name: frontend-app
-        image: localhost/frontend-app:v1
+        image: local/frontend-app:v13
+        env:
+          - name: VITE_SERVER_IP
+            value: "server-service"
+          - name: VITE_SERVER_PORT
+            value: "8090"
         ports:
         - containerPort: 80
 ---

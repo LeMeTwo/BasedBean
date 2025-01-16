@@ -3,8 +3,8 @@ import "./style/Universal.css";
 import { useState } from "react";
 import Cookies from "js-cookie";
 
-const ip = import.meta.env.VITE_SERVER_IP;
-const port = import.meta.env.VITE_SERVER_PORT;
+const ip = "localhost";
+const port = "8090";
 
 function getHeaders() {
     const headers = new Headers();
