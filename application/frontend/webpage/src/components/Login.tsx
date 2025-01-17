@@ -12,7 +12,7 @@ const port = import.meta.env.VITE_SERVER_PORT;
 function Login() {
     const [user, setUser] = useState("");
     const [password, setPwd] = useState("");
-    const [result, setResult] = useState("Quickly login!");
+    const [result, setResult] = useState("");
     const navigate = useNavigate();
 
     const handleSubmitForm = () => {
