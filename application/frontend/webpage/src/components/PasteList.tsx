@@ -4,8 +4,8 @@ import Cookies from "js-cookie";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const ip = import.meta.env.VITE_SERVER_IP;
-const port = import.meta.env.VITE_SERVER_PORT;
+const ip = "localhost";
+const port = "8090";
 
 function getPastes(setList: any, setLoading: any) {
     fetch("http://" + ip + ":" + port + "/user/pastes", {
@@ -31,7 +31,7 @@ function loadPaste(key: string, navigate: NavigateFunction) {
 }
 
 function deletePaste(key: string) {
-    fetch("http://" + ip + ":" + port + "/paste/" + key, {
+    fetch("http://" + ip + ":" + "8090" + "/paste/" + key, {
         method: "DELETE",
         headers: { Authorization: "Bearer " + Cookies.get("token") },
         credentials: "include",

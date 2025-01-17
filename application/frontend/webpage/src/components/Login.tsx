@@ -6,8 +6,8 @@ import { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 
-const ip = import.meta.env.VITE_SERVER_IP;
-const port = import.meta.env.VITE_SERVER_PORT;
+const ip = "localhost";
+//const port = "8090";
 
 function Login() {
     const [user, setUser] = useState("");
@@ -16,7 +16,7 @@ function Login() {
     const navigate = useNavigate();
 
     const handleSubmitForm = () => {
-        fetch("http://" + ip + ":" + port + "/login", {
+        fetch("http://" + ip + ":" + "8090" + "/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user, password }),
