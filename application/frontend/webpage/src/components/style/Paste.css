@@ -1,0 +1,90 @@
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
+
+ .container-paste{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    gap:1rem;
+    border-radius: 1.5rem;
+    padding: 1rem 1rem;
+    color: #FFF0D1;
+    background-color: #1c1c1c;
+    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+}
+
+@media (max-width: 450px) {
+    .container-paste {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+
+.container-paste__header{
+    align-self: center;
+}
+
+.container-paste__buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+
+.input-title{
+    resize: none;
+    outline: none;
+    width:20vw;
+    background-color: #282c34;
+    border-radius: 10px;
+    border-width: 0;
+    padding: 10px;
+    color: #FFF0D1;
+    font-size: 18px; 
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+}
+
+.input-title:hover{
+    cursor: pointer;
+    background-color: #2d3138;
+}
+
+.input-title:focus{
+    cursor: text;
+}
+
+
+.input-text{
+    width:70vw;
+    height:50vh;
+    resize: none;
+    outline: none;
+    background-color: #282c34;
+    border-radius: 10px;
+    border:0px;
+    padding: 0.5em;
+    color: #FFF0D1;
+    font-size: 18px; 
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+}
+.input-text:hover{
+    cursor: pointer;
+    background-color: #2d3138;
+
+}
+.input-text:focus{
+    cursor: text;
+}
+
+

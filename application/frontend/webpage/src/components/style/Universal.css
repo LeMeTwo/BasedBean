@@ -1,0 +1,28 @@
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
+
+.button{
+  background-color: #282c34;
+  border: none;
+  border-radius: 15px;
+  color: #FFF0D1;
+  padding: 12px ;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px; 
+  font-weight: bold; 
+  box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+}
+
+.button:hover{
+  cursor: pointer;
+  background-color: #2d3138;
+}

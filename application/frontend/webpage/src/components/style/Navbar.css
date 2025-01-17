@@ -1,0 +1,18 @@
+.container-nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    background-color: #1c1c1c;
+    padding: 1rem;
+    border-radius:0 0 1.5rem 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(15, 15, 15, 0.6);
+}
+
+@media (max-width: 450px) {
+    .container-nav {
+      flex-direction: column;
+      align-items: end;
+    }
+  }
