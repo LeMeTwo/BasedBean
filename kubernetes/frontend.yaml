@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend-app
-        image: local/frontend-app:v13
+        image: local/frontend-app:v16
         env:
           - name: VITE_SERVER_IP
             value: "server-service"
