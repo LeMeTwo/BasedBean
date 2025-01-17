@@ -2,12 +2,13 @@ import "./style/PasteList.css";
 import "./style/Universal.css";
 import Cookies from "js-cookie";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const ip = "localhost";
 //const "8090" =  "8090" ;
 
-function getPastes() {
-    fetch("http://" + ip + ":" +  "8090"  + "/user/pastes", {
+function getPastes(setList: any, setLoading: any) {
+    fetch("http://" + ip + ":" + port + "/user/pastes", {
         method: "GET",
         headers: { Authorization: "Bearer " + Cookies.get("token") },
     })
@@ -16,12 +17,13 @@ function getPastes() {
             return response.json();
         })
         .then((data) => {
-            return data.pastes;
+            setLoading(false);
+            setList(data.pastes);
+            return data;
         })
         .catch((error: Error) => {
             console.log(Number(error.message));
         });
-    return [];
 }
 
 function loadPaste(key: string, navigate: NavigateFunction) {
@@ -42,17 +44,24 @@ function deletePaste(key: string) {
         });
     location.reload();
 }
-
 function PasteList() {
+    console.log("Paste Loaded");
+    const [isLoading, setLoading] = useState(true);
+    const [list, setList] = useState([]); // Loading state
+    if (isLoading) {
+        getPastes(setList, setLoading);
+    }
     const navigate = useNavigate();
-    const list = getPastes();
 
     return (
         <div className="container-pastelist">
-            {list.length === 0 && <p>No pastes</p>}
             <ul className="container-pastelist__links">
+                {list.length === 0 && <h1>No pastes to load</h1>}
                 {list.map((item: any) => (
-                    <li className="noBullet" key={item.key}>
+                    <li
+                        className="container-pastelist__le noBullet"
+                        key={item.key}
+                    >
                         <button
                             className="button"
                             onClick={() => loadPaste(item.key, navigate)}
