@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const ip = "localhost";
+const ip = "127.0.0.1";
 const port = "8090";
 
 function getPastes(setList: any, setLoading: any) {
@@ -31,7 +31,7 @@ function loadPaste(key: string, navigate: NavigateFunction) {
 }
 
 function deletePaste(key: string) {
-    fetch("http://" + ip + ":" + "8090" + "/paste/" + key, {
+    fetch("http://" + ip + ":" + port + "/paste/" + key, {
         method: "DELETE",
         headers: { Authorization: "Bearer " + Cookies.get("token") },
         credentials: "include",

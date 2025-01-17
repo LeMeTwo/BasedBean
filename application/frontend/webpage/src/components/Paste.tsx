@@ -3,7 +3,7 @@ import "./style/Universal.css";
 import { useState } from "react";
 import Cookies from "js-cookie";
 
-const ip = "localhost";
+const ip = "127.0.0.1";
 const port = "8090";
 
 function getHeaders() {

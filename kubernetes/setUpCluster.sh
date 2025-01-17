@@ -8,6 +8,11 @@ sudo chmod 766 mongodb-keyfile
 echo "Tworzenie sekretu Kubernetes..."
 kubectl create secret generic mongodb-keyfile --from-file=mongodb-keyfile
 
+echo "Tworzenie podstawowego deploymentu"
+kubectl apply -f keg.yaml
+kubectl apply -f server.yaml
+kubectl apply -f keydb.yaml
+
 # Tworzenie zasobów Kubernetes z manifestu
 echo "Tworzenie zasobów z manifestu..."
 kubectl apply -f mongodb-ha.yaml
@@ -15,6 +20,9 @@ kubectl apply -f mongodb-ha.yaml
 # Oczekiwanie na StatefulSet
 echo "Czekam, aż StatefulSet mongodb będzie gotowy..."
 kubectl rollout status statefulset/mongodb --timeout=180s
+
+echo "Pakowanie kluczy do keyDB"
+kubectl exec keydb-0 -- sh -c 'seq 1000 9999 | sed "s/\(\S*\)/sadd \1.avail \"\"/" | keydb-cli > /dev/null'
 
 # Oczekiwanie na pody StatefulSet
 echo "Czekam, aż wszystkie pody StatefulSet mongodb będą gotowe..."
@@ -34,5 +42,7 @@ rs.initiate({
   ]
 })
 '
+
+kubectl apply -f frontend.yaml
 
 echo "Replika MongoDB została zainicjowana."
